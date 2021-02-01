@@ -6,7 +6,16 @@ endif
 let s:save_cpo = &cpoptions
 set cpo&vim
 
-command! Vimperfect lua require('vimperfect').vimperfect()
+function! Vimperfect()
+    " Makes it so plugin is updated after changes, removed when not in dev environment
+    if exists("g:vimperfect_dev")
+        lua for k in pairs(package.loaded) do if k:match("^vimperfect") then package.loaded[k] = nil end end
+    end
+
+    lua require('vimperfect').vimperfect()
+endfun
+
+command! Vimperfect :call Vimperfect()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
