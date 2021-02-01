@@ -1,7 +1,8 @@
+local vim = vim
+
 local function vimperfect()
-    vim.register_keystroke_callback(function()
-        print('Key press')
-    end)
+    print("Start Vimperfect")
+    print(vim.fn.nvim_get_current_line())
     return 0
 end
 
