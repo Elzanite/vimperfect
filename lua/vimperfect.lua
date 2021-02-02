@@ -20,7 +20,6 @@ local function shuffle_list(list)
     -- Fisher Yates Algorithm
     math.randomseed(os.time())
 
-    print(vim.inspect(list))
     local shuffled_list = vim.deepcopy(list)
     for i, el in pairs(list) do
         local j = math.random(#list - i, #list)
