@@ -1,18 +1,48 @@
 local vim = vim
 
-local function randomize_line(line, seed)
-    math.randomseed(seed)
-    local edit_id = math.random(1, 10)
+local function join_list(list, sep)
+    local join_str = ''
 
-    local modified_line = line
-
-    if edit_id > 5 then
-        modified_line = 'modified'
-    else
-        modified_line = line
+    local first = true
+    for _, word in pairs(list) do
+        if first then
+            join_str = word
+            first = false
+        else
+            join_str = join_str .. sep .. word
+        end
     end
 
-    return modified_line
+    return join_str
+end
+
+local function shuffle_list(list)
+    -- Fisher Yates Algorithm
+    math.randomseed(os.time())
+
+    print(vim.inspect(list))
+    local shuffled_list = vim.deepcopy(list)
+    for i, el in pairs(list) do
+        local j = math.random(#list - i, #list)
+        shuffled_list[j] = el
+    end
+
+    return shuffled_list
+end
+
+local function randomize_line(line, seed)
+    local randomize_funcs = {
+        -- Functions that take in a list of words and return a list of words
+        shuffle_list,
+        function() return {} end,
+        function(x) return x end,
+    }
+
+    math.randomseed(seed)
+    local edit = math.random(1, #randomize_funcs)
+
+    local split_line = vim.split(line, " ")
+    return join_list(randomize_funcs[edit](split_line), " ")
 end
 
 local function randomize_buffer(lines)
@@ -35,8 +65,6 @@ local function vimperfect()
     vim.fn.nvim_buf_set_option(new_buffer, 'filetype', current_buffer_filetype)
     vim.fn.nvim_win_set_buf(0, new_buffer)
 end
-
-
 
 return {
     vimperfect = vimperfect
